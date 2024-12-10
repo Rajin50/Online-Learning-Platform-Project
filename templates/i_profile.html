@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Instructor Profile - LearnForge</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/i_profile.css') }}">
+</head>
+<body>
+
+    <!-- Navbar -->
+    <div class="navbar">
+        <div class="logo">LearnForge</div>
+        <div class="nav-buttons">
+            <a href="{{ url_for('instructor_dashboard') }}">Dashboard</a>
+            <a href="#">Browse Courses</a>
+            <a href="{{ url_for('i_profile') }}">Profile</a>
+            <a href="#">Add Courses</a>
+            <a href="{{ url_for('i_logout') }}">Log Out</a>
+        </div>
+    </div>
+
+    <!-- Profile Section -->
+    <div class="profile-container">
+    <h1>Instructor Profile</h1>
+    
+    <form method="POST" enctype="multipart/form-data">
+        <div class="profile-info">
+            <img src="{{ instructor[9] }}" alt="Profile Picture" class="profile-img">
+            <div class="form-group">
+                <label for="instructor_id">Instructor ID</label>
+                <input type="text" id="instructor_id" value="{{ instructor[1] }}" disabled>
+            </div>
+            <div class="form-group">
+                <label for="name">Name</label>
+                <input type="text" id="name" name="name" value="{{ instructor[0] }}" required>
+            </div>
+            <div class="form-group">
+                <label for="phone_no">Phone No</label>
+                <input type="text" id="phone_no" value="{{ instructor[2] }}" disabled>
+            </div>
+            <div class="form-group">
+                <label for="email">Email</label>
+                <input type="email" id="email" value="{{ instructor[3] }}" disabled>
+            </div>
+            <div class="form-group">
+                <label for="password">Password</label>
+                <input type="password" id="password" name="password" value="{{ instructor[4] }}" required>
+            </div>
+            <div class="form-group">
+                <label for="course_name">Course Name</label>
+                <input type="text" id="course_name" name="course_name" value="{{ instructor[5] }}" required>
+            </div>
+            <div class="form-group">
+                <label for="address">Address</label>
+                <input type="text" id="address" name="address" value="{{ instructor[6] }}" required>
+            </div>
+            <div class="form-group">
+                <label for="date_of_birth">Date of Birth</label>
+                <input type="date" id="date_of_birth" name="date_of_birth" value="{{ instructor[7] }}" required>
+            </div>
+            <div class="form-group">
+                <label for="blood_group">Blood Group</label>
+                <input type="text" id="blood_group" name="blood_group" value="{{ instructor[8] }}" required>
+            </div>
+            <div class="form-group">
+                <label for="profile_picture">Profile Picture</label>
+                <input type="file" id="profile_picture" name="profile_picture">
+            </div>
+            <button type="submit">Update</button>
+        </div>
+    </form>
+</div>
+
+</body>
+</html>

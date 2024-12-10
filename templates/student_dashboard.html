@@ -1,0 +1,245 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Student Dashboard - LearnForge</title>
+    
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500&family=Poppins:wght@400;600&display=swap" rel="stylesheet">
+
+    <!-- CSS Styles -->
+    <style>
+        /* General Reset */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        /* Body and Font */
+        body {
+            font-family: 'Roboto', sans-serif;
+            background-color: #f4f4f4;
+        }
+
+        h1, h2, p {
+            font-family: 'Poppins', sans-serif;
+        }
+
+        /* Navbar Styling */
+        .navbar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            background-color: #333;
+            color: #fff;
+            padding: 15px 50px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            z-index: 10;
+        }
+
+        .navbar .logo {
+            font-size: 30px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .navbar .nav-buttons {
+            display: flex;
+            gap: 15px;
+        }
+
+        .navbar .nav-buttons a {
+            color: #fff;
+            text-decoration: none;
+            font-size: 16px;
+            padding: 10px 20px;
+            border-radius: 5px;
+            transition: background-color 0.3s ease;
+        }
+
+        .navbar .nav-buttons a:hover {
+            background-color: #555;
+        }
+
+        /* Main Content Layout */
+        .container {
+            display: flex;
+            margin-top: 80px;
+        }
+
+        .left-panel {
+            width: 70%;
+            padding: 20px;
+        }
+
+        .right-panel {
+            width: 30%;
+            padding: 20px;
+            background-color: #f1f1f1;
+        }
+
+        /* Greeting Section */
+        .greeting {
+            margin-bottom: 30px;
+            font-size: 24px;
+            font-weight: 600;
+        }
+
+        /* Course Cards Section */
+        .course-card {
+            background: #fff;
+            border-radius: 10px;
+            padding: 20px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+            margin-bottom: 20px;
+            text-align: center;
+        }
+
+        .course-card h3 {
+            font-size: 18px;
+            margin-bottom: 10px;
+        }
+
+        .progress-bar {
+            background-color: #eee;
+            border-radius: 5px;
+            height: 20px;
+            margin-bottom: 15px;
+        }
+
+        .progress {
+            height: 100%;
+            background-color: #4caf50;
+            border-radius: 5px;
+            transition: width 0.5s ease;
+        }
+
+        .course-card button {
+            background-color: #4caf50;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        .course-card button:hover {
+            background-color: #45a049;
+        }
+
+        /* Stats Cards */
+        .stat-card {
+            background: #fff;
+            border-radius: 10px;
+            padding: 20px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+            margin-bottom: 20px;
+            text-align: center;
+        }
+
+        .stat-card h3 {
+            font-size: 18px;
+            margin-bottom: 10px;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .container {
+                flex-direction: column;
+                align-items: center;
+            }
+
+            .left-panel, .right-panel {
+                width: 100%;
+                padding: 15px;
+            }
+
+            .navbar {
+                padding: 10px 20px;
+            }
+
+            .navbar .nav-buttons a {
+                padding: 8px 16px;
+                font-size: 14px;
+            }
+        }
+
+    </style>
+</head>
+
+<body>
+
+    <!-- Navbar -->
+    <div class="navbar">
+        <div class="logo">LearnForge</div>
+        <div class="nav-buttons">
+            <a href="{{ url_for('student_dashboard') }}">Dashboard</a>
+            <a href="#">Browse Courses</a>
+            <a href="{{ url_for('profile') }}">Profile</a>
+            <a href="#">Certifications</a>
+            <a href="{{ url_for('logout') }}">Log Out</a>
+        </div>
+    </div>
+
+    <!-- Main Content -->
+    <div class="container">
+        <!-- Left Panel (Student Info & Courses) -->
+        <div class="left-panel">
+            <!-- Greeting -->
+            <div class="greeting">
+                <h1>Hey, {{ student_name }}!</h1>  <!-- Replace "John Doe" dynamically -->
+                <h2>Welcome to LearnForge</h2> 
+            </div>
+
+            <!-- Enrolled Courses -->
+            <div class="course-card">
+                <h3>Introduction to Python</h3>
+                <div class="progress-bar">
+                    <div class="progress" style="width: 30%;"></div>
+                </div>
+                <button>Keep Making Progress</button>
+            </div>
+
+            <div class="course-card">
+                <h3>Introduction to Data Science</h3>
+                <div class="progress-bar">
+                    <div class="progress" style="width: 25%;"></div>
+                </div>
+                <button>Keep Making Progress</button>
+            </div>
+
+            <div class="course-card">
+                <h3>Data Structure with Python</h3>
+                <div class="progress-bar">
+                    <div class="progress" style="width: 35%;"></div>
+                </div>
+                <button>Keep Making Progress</button>
+            </div>
+        </div>
+
+        <!-- Right Panel (Stats) -->
+        <div class="right-panel">
+            <div class="stat-card">
+                <h3>Course Completed</h3>
+                <p>0</p>
+            </div>
+
+            <div class="stat-card">
+                <h3>Total Certifications</h3>
+                <p>0</p>
+            </div>
+        </div>
+    </div>
+
+</body>
+
+</html>

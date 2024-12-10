@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Instructor Profile - LearnForge</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/a_profile.css') }}">
+</head>
+<body>
+
+    <!-- Navbar -->
+    <div class="navbar">
+        <div class="logo">LearnForge</div>
+        <div class="nav-buttons">
+            <a href="{{ url_for('admin_dashboard') }}">Dashboard</a>
+            <a href="#">Browse Courses</a>
+            <a href="{{ url_for('a_profile') }}">Profile</a>
+            <a href="#">Add Courses</a>
+            <a href="{{ url_for('a_logout') }}">Log Out</a>
+        </div>
+    </div>
+
+    <!-- Profile Section -->
+    <div class="profile-container">
+    <h1>Admin Profile</h1>
+    
+    <form method="POST" enctype="multipart/form-data">
+        <div class="profile-info">
+            <img src="{{ admin[8] }}" alt="Profile Picture" class="profile-img">
+            <div class="form-group">
+                <label for="admin_id">Admin ID</label>
+                <input type="text" id="admin_id" value="{{ admin[1] }}" disabled>
+            </div>
+            <div class="form-group">
+                <label for="name">Name</label>
+                <input type="text" id="name" name="name" value="{{ admin[0] }}" required>
+            </div>
+            <div class="form-group">
+                <label for="phone_no">Phone No</label>
+                <input type="text" id="phone_no" value="{{ admin[2] }}" disabled>
+            </div>
+            <div class="form-group">
+                <label for="email">Email</label>
+                <input type="email" id="email" value="{{ admin[3] }}" disabled>
+            </div>
+            <div class="form-group">
+                <label for="password">Password</label>
+                <input type="password" id="password" name="password" value="{{ admin[4] }}" required>
+            </div>
+            <div class="form-group">
+                <label for="address">Address</label>
+                <input type="text" id="address" name="address" value="{{ admin[5] }}" required>
+            </div>
+            <div class="form-group">
+                <label for="date_of_birth">Date of Birth</label>
+                <input type="date" id="date_of_birth" name="date_of_birth" value="{{ admin[6] }}" required>
+            </div>
+            <div class="form-group">
+                <label for="blood_group">Blood Group</label>
+                <input type="text" id="blood_group" name="blood_group" value="{{ admin[7] }}" required>
+            </div>
+            <div class="form-group">
+                <label for="profile_picture">Profile Picture</label>
+                <input type="file" id="profile_picture" name="profile_picture">
+            </div>
+            <button type="submit">Update</button>
+        </div>
+    </form>
+</div>
+
+</body>
+</html>

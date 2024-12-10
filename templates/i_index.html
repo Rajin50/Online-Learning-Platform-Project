@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>LearnForge - Edu-Tech Learning Platform</title>
+
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500&family=Poppins:wght@400;600&display=swap" rel="stylesheet">
+
+    <!-- CSS Styles -->
+    <style>
+        /* General Styles */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Roboto', sans-serif;
+            background-color: #f4f4f4;
+        }
+
+        h1,
+        p {
+            font-family: 'Poppins', sans-serif;
+        }
+
+        /* Navbar Styling */
+        .navbar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            background-color: #333;
+            padding: 15px 50px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            z-index: 10;
+        }
+
+        .navbar .logo {
+            color: #fff;
+            font-size: 30px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .navbar .buttons {
+            display: flex;
+            gap: 15px;
+        }
+
+        .navbar .buttons a {
+            color: #fff;
+            text-decoration: none;
+            background-color: #007BFF;
+            padding: 10px 20px;
+            border-radius: 5px;
+            font-size: 16px;
+            font-weight: 500;
+            transition: background-color 0.3s ease;
+        }
+
+        .navbar .buttons a:hover {
+            background-color: #0056b3;
+        }
+
+        /* Hero Section (Background Image and Quote) */
+        .hero-section {
+            background-image: url('static/uploads/bg.jpg'); /* Replace with your image URL */
+            background-size: cover;
+            background-position: center;
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            color: white;
+            position: relative;
+            padding: 0 20px;
+        }
+
+        .hero-section::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5); /* Dark overlay */
+            z-index: 1;
+        }
+
+        .hero-section .quote {
+            z-index: 2;
+            font-size: 32px;
+            font-weight: 500;
+            max-width: 800px;
+            margin: 0 20px;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.8);
+        }
+
+        .hero-section .quote p {
+            font-size: 24px;
+            font-weight: 400;
+            margin-top: 20px;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .navbar {
+                padding: 15px 20px;
+            }
+
+            .navbar .logo {
+                font-size: 24px;
+            }
+
+            .navbar .buttons a {
+                font-size: 14px;
+                padding: 8px 15px;
+            }
+
+            .hero-section .quote {
+                font-size: 28px;
+            }
+
+            .hero-section .quote p {
+                font-size: 20px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .navbar .logo {
+                font-size: 20px;
+            }
+
+            .navbar .buttons a {
+                font-size: 12px;
+                padding: 6px 12px;
+            }
+
+            .hero-section .quote {
+                font-size: 24px;
+            }
+
+            .hero-section .quote p {
+                font-size: 18px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- Navbar -->
+    <div class="navbar">
+        <div class="logo">LearnForge</div>
+        <div class="buttons">
+            <a href="{{ url_for('i_login') }}" id="signinBtn">Instructor Sign In</a>
+        </div>
+    </div>
+
+    <!-- Hero Section (Background Image and Quote) -->
+    <div class="hero-section">
+        <div class="quote">
+            <h1>Igniting Innovation through Education</h1>
+            <p>The future belongs to those who learn more skills and combine them in creative ways</p>
+        </div>
+    </div>
+  
+</body>
+</html>
