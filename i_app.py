@@ -113,11 +113,24 @@ def instructor_dashboard():
         cursor.execute("SELECT * FROM instructors where instructor_id=%s", (instructor_id,))
         instructor = cursor.fetchone()
         cursor.close()
-
+           
+        # Fetch courses for the instructor
+        cursor = mysql.connection.cursor()
+        cursor.execute("SELECT course_name, course_picture FROM courses WHERE instructor_id=%s", (instructor_id,))
+        courses = cursor.fetchall()
+        cursor.close()
+        
         if instructor:
-            instructor_name = instructor[0]
-            return render_template('instructor_dashboard.html',instructor=instructor, instructor_name=instructor_name)
-                   
+            instructor_name = instructor[0]  # The first column is the instructor's name
+            no_courses = len(courses) == 0
+            return render_template(
+                'instructor_dashboard.html', 
+                instructor=instructor, 
+                instructor_name=instructor_name, 
+                courses=courses,
+                no_courses=no_courses
+            )
+                
     return redirect(url_for('i_login'))
 
 
