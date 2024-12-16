@@ -130,6 +130,52 @@ def profile():
     
     student_id = session['student_id']
     cursor = mysql.connection.cursor()
+    
+    # If the form is submitted (POST request), update the student's information
+    if request.method == 'POST':
+        # Get updated data from the form
+        new_name = request.form['name']
+        new_password = request.form['password']
+        new_institute = request.form['current_institute']
+        new_address = request.form['address']
+        new_dob = request.form['date_of_birth']
+        new_blood_group = request.form['blood_group']
+        new_picture = request.files['profile_picture'] 
+        
+        # Fetch current student data for fallback values
+        cursor = mysql.connection.cursor()
+        cursor.execute("SELECT * FROM students WHERE student_id = %s", (student_id,))
+        student = cursor.fetchone()  # Fetch the student's record
+        cursor.close()
+
+        if not student:
+            flash("Student not found!", "danger")
+            return redirect(url_for('login'))
+                
+        # Handle profile picture upload
+        if new_picture and new_picture.filename.strip():
+            filename = secure_filename(new_picture.filename)
+            file_path = os.path.join('static/uploads', filename)
+            file_path = file_path.replace("\\", "/")
+            new_picture.save(file_path)
+        else:
+            file_path = student[9]   # Keep old picture if no new one
+            
+        # Update the student's information in the database (except for student_id, phone_no, and email)
+        cursor = mysql.connection.cursor()
+        
+        update_query = """
+            UPDATE students
+            SET name = %s, password = %s, current_institute = %s, address = %s,
+                date_of_birth = %s, blood_group = %s, profile_picture = %s
+            WHERE student_id = %s
+        """
+        cursor.execute(update_query, (new_name, new_password, new_institute, new_address, new_dob, new_blood_group, file_path, student_id))
+        mysql.connection.commit()
+        cursor.close()
+
+        flash('Profile updated successfully!', 'success')
+        return redirect(url_for('profile'))
 
     # Fetch student data from the database
     cursor.execute("SELECT * FROM students WHERE student_id = %s", (student_id,))
@@ -164,47 +210,6 @@ def profile():
     else:
         flash("Student not found", 'danger')
         return redirect(url_for('login'))    
-        
-    # If the form is submitted (POST request), update the student's information
-    if request.method == 'POST':
-        # Get updated data from the form
-        new_name = request.form['name']
-        new_password = request.form['password']
-        new_institute = request.form['current_institute']
-        new_address = request.form['address']
-        new_dob = request.form['date_of_birth']
-        new_blood_group = request.form['blood_group']
-
-        # Optionally handle profile picture if uploaded
-        new_picture = None
-        if 'profile_picture' in request.files:
-            file = request.files['profile_picture']
-            if file:
-                new_picture = file.read()  # Save the uploaded picture (BLOB)
-                
-        # Handle profile picture upload
-        # if new_picture:
-        #     filename = secure_filename(new_picture.filename)
-        #     file_path = os.path.join('static/uploads', filename)
-        #     new_picture.save(file_path)
-        # else:
-        #     file_path = student['profile_picture']  # Keep old picture if no new one
-
-        # Update the student's information in the database (except for student_id, phone_no, and email)
-        cursor = mysql.connection.cursor()
-        
-        update_query = """
-            UPDATE students
-            SET name = %s, password = %s, current_institute = %s, address = %s,
-                date_of_birth = %s, blood_group = %s, profile_picture = %s
-            WHERE student_id = %s
-        """
-        cursor.execute(update_query, (new_name, new_password, new_institute, new_address, new_dob, new_blood_group, new_picture, student_id))
-        mysql.connection.commit()
-        cursor.close()
-
-        flash('Profile updated successfully!', 'success')
-        return redirect(url_for('profile'))
 
     # Render the profile template with student data
     return render_template('s_profile.html', student=student)
