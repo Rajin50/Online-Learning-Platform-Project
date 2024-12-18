@@ -177,6 +177,51 @@ def a_profile():
     
     admin_id = session['admin_id']
     cursor = mysql.connection.cursor()
+    
+    # If the form is submitted (POST request), update the admin's information
+    if request.method == 'POST':
+        # Get updated data from the form
+        new_name = request.form['name']
+        new_password = request.form['password']
+        new_address = request.form['address']
+        new_dob = request.form['date_of_birth']
+        new_blood_group = request.form['blood_group']
+        new_picture = request.files['profile_picture']
+        
+        # Fetch admin data from the database
+        cursor = mysql.connection.cursor()
+        cursor.execute("SELECT * FROM admin WHERE admin_id = %s", (admin_id,))
+        admin = cursor.fetchone()  # Fetch the admin's record
+        cursor.close()
+        
+        if not admin:
+            flash("Admin not found", 'danger')
+            return redirect(url_for('a_login'))
+                
+        # Handle profile picture upload
+        if new_picture and new_picture.filename.strip():
+            filename = secure_filename(new_picture.filename)
+            file_path = os.path.join('static/uploads', filename)
+            file_path = file_path.replace("\\", "/")
+            new_picture.save(file_path)
+        else:
+            file_path = admin[8]  # Keep old picture if no new one
+
+        # Update the admin's information in the database (except for admin_id, phone_no, and email)
+        cursor = mysql.connection.cursor()
+        
+        update_query = """
+            UPDATE admin
+            SET name = %s, password = %s, address = %s,
+                date_of_birth = %s, blood_group = %s, profile_picture = %s
+            WHERE admin_id = %s
+        """
+        cursor.execute(update_query, (new_name, new_password, new_address, new_dob, new_blood_group, file_path, admin_id))
+        mysql.connection.commit()
+        cursor.close()
+
+        flash('Profile updated successfully!', 'success')
+        return redirect(url_for('a_profile'))
 
     # Fetch admin data from the database
     cursor.execute("SELECT * FROM admin WHERE admin_id = %s", (admin_id,))
@@ -210,45 +255,6 @@ def a_profile():
         flash("Admin not found", 'danger')
         return redirect(url_for('a_login'))    
         
-    # If the form is submitted (POST request), update the admin's information
-    if request.method == 'POST':
-        # Get updated data from the form
-        new_name = request.form['name']
-        new_password = request.form['password']
-        new_address = request.form['address']
-        new_dob = request.form['date_of_birth']
-        new_blood_group = request.form['blood_group']
-
-        # Optionally handle profile picture if uploaded
-        new_picture = None
-        if 'profile_picture' in request.files:
-            file = request.files['profile_picture']
-            if file:
-                new_picture = file.read()  # Save the uploaded picture (BLOB)
-                
-        # Handle profile picture upload
-        # if new_picture:
-        #     filename = secure_filename(new_picture.filename)
-        #     file_path = os.path.join('static/uploads', filename)
-        #     new_picture.save(file_path)
-        # else:
-        #     file_path = student['profile_picture']  # Keep old picture if no new one
-
-        # Update the student's information in the database (except for student_id, phone_no, and email)
-        cursor = mysql.connection.cursor()
-        
-        update_query = """
-            UPDATE admin
-            SET name = %s, password = %s, address = %s,
-                date_of_birth = %s, blood_group = %s, profile_picture = %s
-            WHERE admin_id = %s
-        """
-        cursor.execute(update_query, (new_name, new_password, new_address, new_dob, new_blood_group, new_picture, admin_id))
-        mysql.connection.commit()
-        cursor.close()
-
-        flash('Profile updated successfully!', 'success')
-        return redirect(url_for('a_profile'))
 
     # Render the profile template with admin data
     return render_template('a_profile.html', admin=admin)
