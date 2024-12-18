@@ -105,19 +105,40 @@ def login():
 
 @app.route('/student_dashboard')
 def student_dashboard():
-    
     if 'student_id' in session:
         student_id = session['student_id']
-
+        
         cursor = mysql.connection.cursor()
-        cursor.execute("SELECT * FROM students where student_id=%s", (student_id,))
+        
+        # Fetch student details
+        cursor.execute("SELECT name FROM students WHERE student_id=%s", (student_id,))
         student = cursor.fetchone()
+        
+        if not student:
+            return redirect(url_for('login'))  # Redirect if student not found
+        
+        student_name = student[0]
+        
+        # Fetch enrolled courses for the student
+        cursor.execute("""
+            SELECT c.course_code, c.course_name, c.course_picture
+            FROM courses c
+            INNER JOIN enrollment_status e ON c.course_code = e.course_code
+            WHERE e.student_id = %s
+        """, (student_id,))
+        
+        enrolled_courses = cursor.fetchall()
         cursor.close()
-
+        
         if student:
             student_name = student[0]
-            return render_template('student_dashboard.html',student=student, student_name=student_name)
-                   
+            no_courses = len(enrolled_courses) == 0
+        
+            return render_template('student_dashboard.html', 
+                                student_name=student_name, 
+                                enrolled_courses=enrolled_courses,
+                                no_courses=no_courses)
+    
     return redirect(url_for('login'))
 
 
@@ -214,6 +235,64 @@ def profile():
     # Render the profile template with student data
     return render_template('s_profile.html', student=student)
 
+@app.route('/view_course/<int:course_code>')
+def view_course(course_code):
+    # Fetch course details from courses table
+    cursor = mysql.connection.cursor()
+    course_query = """
+        SELECT course_name, category, num_of_students, completation_rate
+        FROM courses
+        WHERE course_code = %s
+    """
+    cursor.execute(course_query, (course_code,))
+    course = cursor.fetchone()  # (course_name, category, num_of_students, completion_rate)
+
+    if not course:
+        cursor.close()
+        return "Course not found", 404
+
+    # Fetch content details from content table
+    content_query = """
+        SELECT module_no, outline_pdf, pdf_file, module_video, assignment, deadline
+        FROM content
+        WHERE course_code = %s
+        ORDER BY module_no ASC
+    """
+    cursor.execute(content_query, (course_code,))
+    content = cursor.fetchall()  # List of content for the course
+    
+    # Fetch leaderboard for the course
+    leaderboard_query = """
+        SELECT p1, p2, p3, p4, p5
+        FROM leaderboard
+        WHERE course_code = %s
+    """
+    cursor.execute(leaderboard_query, (course_code,))
+    leaderboard = cursor.fetchone()  # (p1, p2, p3, p4, p5)
+
+    # Fetch student names for the leaderboard positions
+    student_names = []
+    if leaderboard:
+        for position in leaderboard:
+            if position:  # Check if the position is not None
+                cursor.execute("SELECT name FROM students WHERE student_id = %s", (position,))
+                student = cursor.fetchone()
+                if student:
+                    student_names.append(student[0])
+
+
+    cursor.close()
+
+    return render_template(
+        's_view_course.html',
+        course_code=course_code,
+        course_name=course[0],
+        course_category=course[1],
+        num_of_students=course[2],
+        completion_rate=course[3],
+        content=content if content else [],  # Pass empty list if no modules
+        leaderboard=student_names
+    )
 
 @app.route('/logout')
 def logout():
