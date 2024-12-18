@@ -105,7 +105,6 @@ def i_login():
 
 @app.route('/instructor_dashboard')
 def instructor_dashboard():
-    
     if 'instructor_id' in session:
         instructor_id = session['instructor_id']
 
@@ -116,7 +115,7 @@ def instructor_dashboard():
            
         # Fetch courses for the instructor
         cursor = mysql.connection.cursor()
-        cursor.execute("SELECT course_name, course_picture FROM courses WHERE instructor_id=%s", (instructor_id,))
+        cursor.execute("SELECT course_code, course_name, course_picture FROM courses WHERE instructor_id=%s", (instructor_id,))
         courses = cursor.fetchall()
         cursor.close()
         
@@ -227,6 +226,43 @@ def i_profile():
     # Render the profile template with instructor data
     return render_template('i_profile.html', instructor=instructor)
 
+@app.route('/view_course/<int:course_code>')
+def view_course(course_code):
+    # Fetch course details from courses table
+    cursor = mysql.connection.cursor()
+    course_query = """
+        SELECT course_name, category, num_of_students, completation_rate
+        FROM courses
+        WHERE course_code = %s
+    """
+    cursor.execute(course_query, (course_code,))
+    course = cursor.fetchone()  # (course_name, category, num_of_students, completion_rate)
+
+    if not course:
+        cursor.close()
+        return "Course not found", 404
+
+    # Fetch content details from content table
+    content_query = """
+        SELECT module_no, outline_pdf, pdf_file, module_video, assignment, deadline
+        FROM content
+        WHERE course_code = %s
+        ORDER BY module_no ASC
+    """
+    cursor.execute(content_query, (course_code,))
+    content = cursor.fetchall()  # List of content for the course
+
+    cursor.close()
+
+    return render_template(
+        'i_view_course.html',
+        course_code=course_code,
+        course_name=course[0],
+        course_category=course[1],
+        num_of_students=course[2],
+        completion_rate=course[3],
+        content=content if content else [],  # Pass empty list if no modules
+    )
 
 @app.route('/i_logout')
 def i_logout():
